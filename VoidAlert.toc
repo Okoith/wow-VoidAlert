@@ -17,4 +17,5 @@ Locales\deDE.lua
 Debug.lua
 Sounds.lua
 Alerts.lua
+Options.lua
 Core.lua

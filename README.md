@@ -29,10 +29,24 @@ The zip contains all required libraries. A plain copy of the repository does **n
 
 ## Usage
 
-The settings menu follows in the next version. Until then, VoidAlert is set up with chat commands:
+### Settings
+
+Type `/voidalert` or open *Settings > AddOns > VoidAlert*. Changes apply immediately.
+
+- **Status line** at the top: shows the detected specialization, or a note that VoidAlert is inactive on this character (not a Devourer Demon Hunter).
+- **Void Metamorphosis** and **Collapsing Star:** turn the alert on or off, choose its sound, *Test* button.
+- **General:** sound channel (Master, Sound effects, Dialog, Music, Ambience), only in combat, *Test both* button.
+- **Custom sounds:** where to put your own files (see below).
+- **Debug:** debug mode and *Clear log*.
+- **Profiles** (own entry under VoidAlert): settings are stored per character; switch, copy from another character or reset.
+
+The sound list contains, in this order: the bundled VoidAlert sounds, your own sounds, WoW sounds and all sounds registered with LibSharedMedia by other addons. If a chosen sound is no longer available (for example because the addon that provided it was removed), it is shown as *(missing)* and the default sound is played instead; your choice is kept.
+
+### Commands
 
 | Command | Effect |
 |---|---|
+| `/voidalert` | Open the settings |
 | `/voidalert help` | List the commands |
 | `/voidalert status` | Show whether VoidAlert is active and the current settings |
 | `/voidalert test [meta\|star]` | Play both alerts one after the other (or only one) |
@@ -43,14 +57,14 @@ The settings menu follows in the next version. Until then, VoidAlert is set up w
 | `/voidalert combat on\|off` | Only play alerts in combat |
 | `/voidalert debug on\|off\|clear\|status` | Debug log (`VoidAlertDebugLog` in SavedVariables, off by default) |
 
-Settings are stored per character.
+Changes made with commands are shown in the open settings window right away.
 
 ### Your own sounds
 
 1. Create the folder `World of Warcraft\_retail_\Interface\AddOns\VoidAlert_Sounds\`.
 2. Put your files there as `sound1.ogg` to `sound5.ogg` (the names are fixed).
-3. Type `/reload`.
-4. Choose them with `/voidalert sounds` and `/voidalert sound meta <number>`.
+3. **Restart WoW completely.** `/reload` does not detect new files.
+4. Choose them in the settings (*Custom: sound1.ogg* …) or with `/voidalert sounds` and `/voidalert sound meta <number>`.
 
 The folder is separate from the `VoidAlert` folder, so updates do not touch your files. If a chosen file is missing, VoidAlert tells you once in the chat.
 

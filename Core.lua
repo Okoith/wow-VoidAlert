@@ -37,8 +37,20 @@ local handlers = {}
 -- denn SPELLS_CHANGED kommt oft.
 local function checkSpec(why)
   if not ns.loggedIn then return end
-  if ns.Alerts:Update() then ns.Alerts:LogSpec(why) end
+  if ns.Alerts:Update() then
+    ns.Alerts:LogSpec(why)
+    ns.Options:Notify()   -- Hinweis oben im Menü (aktiv/inaktiv) nachziehen
+  end
 end
+
+-- Profilwechsel (AceDBOptions): Alerts liest ns.db.profile bei jedem Alarm neu,
+-- es genügt, das Menü zu aktualisieren und den Wechsel zu loggen.
+function ns:OnProfileChanged(event)
+  ns.Debug:Add("profile", { event = event, profile = ns.db:GetCurrentProfile() })
+  ns.Options:Notify()
+end
+ns.OnProfileCopied = ns.OnProfileChanged
+ns.OnProfileReset = ns.OnProfileChanged
 
 function handlers.ADDON_LOADED(name)
   if name ~= ADDON_NAME then return end
@@ -46,7 +58,11 @@ function handlers.ADDON_LOADED(name)
 
   -- Ohne dritten Parameter legt AceDB ein Profil pro Charakter an ("Name - Realm")
   ns.db = LibStub("AceDB-3.0"):New("VoidAlertDB", ns.defaults)
+  ns.db.RegisterCallback(ns, "OnProfileChanged", "OnProfileChanged")
+  ns.db.RegisterCallback(ns, "OnProfileCopied", "OnProfileCopied")
+  ns.db.RegisterCallback(ns, "OnProfileReset", "OnProfileReset")
   ns.Debug:Init()
+  ns.Options:Init()
 end
 
 -- Bei ADDON_LOADED war GetSpecialization() im Test noch 0 (SPEC 3), darum erst hier
@@ -110,7 +126,7 @@ for event in pairs(handlers) do
 end
 
 ---------------------------------------------------------------------------
--- Slash-Befehle. Das Menü folgt in Meilenstein 2; bis dahin zeigt /voidalert die Hilfe.
+-- Slash-Befehle. /voidalert ohne Argument öffnet das Menü.
 ---------------------------------------------------------------------------
 
 local ALERTS = { meta = true, star = true }
@@ -121,14 +137,16 @@ end
 
 local function printHelp()
   Print(L["HELP_HEADER"])
-  for _, key in ipairs({ "HELP_HELP", "HELP_STATUS", "HELP_TEST", "HELP_SOUNDS", "HELP_SOUND",
+  for _, key in ipairs({ "HELP_OPEN", "HELP_HELP", "HELP_STATUS", "HELP_TEST", "HELP_SOUNDS", "HELP_SOUND",
       "HELP_TOGGLE", "HELP_CHANNEL", "HELP_COMBAT", "HELP_DEBUG" }) do
     print("  " .. L[key])
   end
 end
 
+-- Nach jeder Änderung per Slash-Befehl ein offenes Menü aktualisieren
 local function changed(setting)
   ns.Debug:Add("setting", setting)
+  ns.Options:Notify()
 end
 
 local commands = {}
@@ -146,7 +164,7 @@ function commands.status()
     local a = p.alerts[alert]
     print("  " .. L["STATUS_ALERT"]:format(L["ALERT_" .. alert], onOff(a.enabled), ns.Sounds:Label(a.sound)))
   end
-  print("  " .. L["STATUS_OPTIONS"]:format(p.channel, onOff(p.combatOnly), onOff(ns.Debug:IsEnabled())))
+  print("  " .. L["STATUS_OPTIONS"]:format(L["CHANNEL_" .. p.channel], onOff(p.combatOnly), onOff(ns.Debug:IsEnabled())))
 end
 
 function commands.test(arg)
@@ -194,7 +212,7 @@ function commands.channel(arg)
     if channel:lower() == arg then
       ns.db.profile.channel = channel
       changed({ channel = channel })
-      Print(L["CHANNEL_SET"]:format(channel))
+      Print(L["CHANNEL_SET"]:format(L["CHANNEL_" .. channel]))
       return
     end
   end
@@ -212,10 +230,12 @@ function commands.debug(arg)
   if arg == "on" then
     ns.Debug:SetEnabled(true)
     ns.Alerts:LogSpec("debugOn")
+    ns.Options:Notify()
     Print(L["DEBUG_ON"])
   elseif arg == "off" then
     ns.Debug:Add("debugOff")
     ns.Debug:SetEnabled(false)
+    ns.Options:Notify()
     Print(L["DEBUG_OFF"])
   elseif arg == "clear" then
     ns.Debug:Clear()
@@ -233,7 +253,8 @@ SlashCmdList.VOIDALERT = function(msg)
   -- LSM-Namen können Großbuchstaben enthalten, werden aber per Nummer gewählt
   arg = arg:lower()
   if cmd == "" then
-    printHelp()
+    -- Menü öffnen; ohne Menü (Bibliothek fehlt, Fehler) die Hilfe zeigen
+    if not ns.Options:Open() then printHelp() end
   elseif commands[cmd] then
     local ok, err = pcall(commands[cmd], arg)
     if not ok then

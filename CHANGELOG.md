@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.0-beta.1
+
+Release candidate.
+
+- **Settings menu** under *Settings > AddOns > VoidAlert* or with `/voidalert`: per alert on/off, sound and *Test* button; sound channel, only in combat and *Test both*; note on custom sounds; debug mode and *Clear log*. A note at the top shows whether VoidAlert is active on this character.
+- **Profiles** as their own entry under VoidAlert: settings per character, copy from another character, reset.
+- A chosen sound that is no longer available is shown as *(missing)* in the menu and is not overwritten; the default sound is played instead.
+- Changes made with chat commands are shown in the open settings window right away. `/voidalert` without arguments now opens the settings, `/voidalert help` lists the commands.
+- Custom sounds: new files need a complete restart of WoW, `/reload` does not detect them. The hints in the menu and chat say so.
+
 ## 1.0.0-alpha.1
 
 First test build.
