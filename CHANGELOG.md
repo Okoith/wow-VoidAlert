@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0-beta.2
+
+- **Profiles page removed.** VoidAlert is made for one character with one specialization. Settings are still stored per character automatically, and your current settings are kept.
+- **New option "Chat messages"** under *General* (off by default): shows the "loaded" message on login and a message when testing. Replies to `/voidalert` commands and error hints are always shown.
+- The library AceDBOptions-3.0 is no longer included.
+
 ## 1.0.0-beta.1
 
 Release candidate.

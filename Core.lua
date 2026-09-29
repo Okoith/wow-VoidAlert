@@ -13,6 +13,7 @@ ns.defaults = {
     },
     channel = "Master",
     combatOnly = true,
+    chatMessages = false,   -- Ladehinweis und Testmeldung im Chat (Fehlerhinweise immer)
   },
   global = {
     debug = false,
@@ -43,24 +44,14 @@ local function checkSpec(why)
   end
 end
 
--- Profilwechsel (AceDBOptions): Alerts liest ns.db.profile bei jedem Alarm neu,
--- es genügt, das Menü zu aktualisieren und den Wechsel zu loggen.
-function ns:OnProfileChanged(event)
-  ns.Debug:Add("profile", { event = event, profile = ns.db:GetCurrentProfile() })
-  ns.Options:Notify()
-end
-ns.OnProfileCopied = ns.OnProfileChanged
-ns.OnProfileReset = ns.OnProfileChanged
-
 function handlers.ADDON_LOADED(name)
   if name ~= ADDON_NAME then return end
   events:UnregisterEvent("ADDON_LOADED")
 
-  -- Ohne dritten Parameter legt AceDB ein Profil pro Charakter an ("Name - Realm")
+  -- Ohne dritten Parameter legt AceDB ein Profil pro Charakter an ("Name - Realm").
+  -- Ein Charakter, der in 1.0.0-beta.1 ein anderes Profil gewählt hat, behält es
+  -- (AceDB liest sv.profileKeys[Charakter]).
   ns.db = LibStub("AceDB-3.0"):New("VoidAlertDB", ns.defaults)
-  ns.db.RegisterCallback(ns, "OnProfileChanged", "OnProfileChanged")
-  ns.db.RegisterCallback(ns, "OnProfileCopied", "OnProfileCopied")
-  ns.db.RegisterCallback(ns, "OnProfileReset", "OnProfileReset")
   ns.Debug:Init()
   ns.Options:Init()
 end
@@ -74,7 +65,7 @@ function handlers.PLAYER_LOGIN()
   ns.Debug:LogMeta()
   ns.Alerts:LogSpec("login")
   -- Andere Klassen und Specs: Addon still (SPEC 3)
-  if ns.Alerts.active then Print(L["LOADED"]:format(ns.VERSION)) end
+  if ns.Alerts.active and ns.db.profile.chatMessages then Print(L["LOADED"]:format(ns.VERSION)) end
 end
 
 function handlers.PLAYER_SPECIALIZATION_CHANGED(unit)
