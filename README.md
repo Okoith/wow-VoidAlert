@@ -1,5 +1,7 @@
 # VoidAlert
 
+<p align="center"><img src="docs/voidAlert.png" alt="VoidAlert logo" width="256"></p>
+
 World of Warcraft addon (Retail 12.1, Midnight) for **Devourer Demon Hunters**. It plays a sound as soon as
 
 - **Void Metamorphosis** becomes usable (after consuming 50 soul fragments), and
@@ -62,6 +64,8 @@ VoidAlert listens to the spell activation glow of the game (`SPELL_ACTIVATION_OV
 | Collapsing Star | 1221150 (the variant during Void Metamorphosis) |
 
 A sound is played only when the glow appears, not when it disappears. Each alert is blocked for 2 seconds after it played, so it never plays twice in a row.
+
+The detection was worked out in game with a test addon (`docs/reference/VoidAlert_Test.lua`): of all tested ways, only the glow event was readable and reliable in combat.
 
 VoidAlert is active when your character knows Void Metamorphosis or is in the Devourer specialization. This is checked again when you change your specialization or talents.
 
