@@ -208,7 +208,9 @@ function Alerts:Test(which)
     C_Timer.After((i - 1) * TEST_GAP, function()
       local ok, err = pcall(function()
         local result = self:Play(alert, "test")
-        ns.Print(L["TEST_PLAYING"]:format(L["ALERT_" .. alert], ns.Sounds:Label(result.sound)))
+        if ns.db.profile.chatMessages then
+          ns.Print(L["TEST_PLAYING"]:format(L["ALERT_" .. alert], ns.Sounds:Label(result.sound)))
+        end
       end)
       if not ok then ns.Debug:Error("Test", err) end
     end)

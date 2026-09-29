@@ -107,6 +107,7 @@ function Debug:LogMeta()
     starSound = p.alerts.star.sound,
     channel = p.channel,
     combatOnly = p.combatOnly,
+    chatMessages = p.chatMessages,
     hasIsSecretValue = issecretvalue ~= nil,
     hasIsSpellKnown = (C_SpellBook and C_SpellBook.IsSpellKnown) ~= nil,
     hasIsKnownFile = (C_UIFileAsset and C_UIFileAsset.IsKnownFile) ~= nil,

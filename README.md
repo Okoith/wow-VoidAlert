@@ -18,6 +18,7 @@ Sound only, nothing is shown on the screen.
 - **WoW sounds:** a few built-in game sounds such as Raid Warning or Ready Check
 - **Sound channel:** Master (default), SFX, Dialog, Music or Ambience
 - **Only in combat** (on by default)
+- **Chat messages** on login and when testing are optional (off by default)
 - **Only active for Devourer Demon Hunters;** silent for all other classes and specializations
 - **Languages:** English and German
 
@@ -35,10 +36,13 @@ Type `/voidalert` or open *Settings > AddOns > VoidAlert*. Changes apply immedia
 
 - **Status line** at the top: shows the detected specialization, or a note that VoidAlert is inactive on this character (not a Devourer Demon Hunter).
 - **Void Metamorphosis** and **Collapsing Star:** turn the alert on or off, choose its sound, *Test* button.
-- **General:** sound channel (Master, Sound effects, Dialog, Music, Ambience), only in combat, *Test both* button.
+- **General:** sound channel (Master, Sound effects, Dialog, Music, Ambience), only in combat, chat messages, *Test both* button.
 - **Custom sounds:** where to put your own files (see below).
 - **Debug:** debug mode and *Clear log*.
-- **Profiles** (own entry under VoidAlert): settings are stored per character; switch, copy from another character or reset.
+
+Settings are stored per character automatically.
+
+**Chat messages** (off by default) shows the "loaded" message on login and a message when testing. Replies to `/voidalert` commands and error hints (for example a missing custom sound) are always shown.
 
 The sound list contains, in this order: the bundled VoidAlert sounds, your own sounds, WoW sounds and all sounds registered with LibSharedMedia by other addons. If a chosen sound is no longer available (for example because the addon that provided it was removed), it is shown as *(missing)* and the default sound is played instead; your choice is kept.
 
@@ -85,7 +89,7 @@ VoidAlert is active when your character knows Void Metamorphosis or is in the De
 
 ## Development
 
-Libraries are fetched by the [BigWigs packager](https://github.com/BigWigsMods/packager) from `.pkgmeta` and are not part of the repository: LibStub, CallbackHandler-1.0, AceDB-3.0, AceDBOptions-3.0, AceGUI-3.0, AceConfig-3.0, LibSharedMedia-3.0.
+Libraries are fetched by the [BigWigs packager](https://github.com/BigWigsMods/packager) from `.pkgmeta` and are not part of the repository: LibStub, CallbackHandler-1.0, AceDB-3.0, AceGUI-3.0, AceConfig-3.0, LibSharedMedia-3.0.
 
 ### Releases
 

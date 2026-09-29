@@ -2,15 +2,15 @@ local ADDON_NAME, ns = ...
 local L = ns.L
 
 -- Einstellungsmenü (SPEC 5) mit AceConfig-3.0 / AceConfigDialog-3.0, Aufbau aus DotRange/OwnDPS.
--- Eingetragen unter Einstellungen > AddOns > VoidAlert, Profile (AceDBOptions-3.0) als Unterpunkt.
--- /voidalert öffnet das eigenständige AceConfigDialog-Fenster mit beiden Reitern.
+-- Eingetragen unter Einstellungen > AddOns > VoidAlert; /voidalert öffnet dasselbe Menü als
+-- eigenständiges AceConfigDialog-Fenster. Keine Profilseite (seit 1.0.0-beta.2): AceDB legt
+-- weiterhin automatisch ein Profil pro Charakter an.
 
 local Options = {}
 ns.Options = Options
 
 local AceConfig = LibStub("AceConfig-3.0", true)
 local AceConfigDialog = LibStub("AceConfigDialog-3.0", true)
-local AceDBOptions = LibStub("AceDBOptions-3.0", true)
 
 ---------------------------------------------------------------------------
 -- Zugriff auf Profilwerte über info.arg = { "pfad", "zum", "schlüssel" }
@@ -88,15 +88,9 @@ local function buildOptions()
   local channels = {}
   for _, channel in ipairs(ns.Sounds.CHANNELS) do channels[channel] = L["CHANNEL_" .. channel] end
 
-  local o = {
+  return {
     type = "group",
     name = "VoidAlert",
-    childGroups = "tab",
-    args = {},
-  }
-
-  o.args.main = {
-    type = "group", order = 1, name = L["TAB_SETTINGS"],
     args = {
       -- Hinweis oben (SPEC 3): inaktiv auf anderen Klassen/Specs, sonst Statuszeile
       inactive = {
@@ -128,8 +122,12 @@ local function buildOptions()
             type = "toggle", order = 2, name = L["OPT_COMBAT_ONLY"], desc = L["OPT_COMBAT_ONLY_DESC"],
             arg = { "combatOnly" }, get = get, set = set,
           },
+          chatMessages = {
+            type = "toggle", order = 3, name = L["OPT_CHAT"], desc = L["OPT_CHAT_DESC"],
+            arg = { "chatMessages" }, get = get, set = set,
+          },
           testBoth = {
-            type = "execute", order = 3, name = L["OPT_TEST_BOTH"],
+            type = "execute", order = 4, name = L["OPT_TEST_BOTH"],
             func = function() ns.Alerts:Test() end,
           },
         },
@@ -174,14 +172,6 @@ local function buildOptions()
       },
     },
   }
-
-  -- Profile: "Kopieren von", Zurücksetzen usw. (AceDBOptions-3.0) ------------
-  if AceDBOptions then
-    o.args.profiles = AceDBOptions:GetOptionsTable(ns.db)
-    o.args.profiles.order = 100
-  end
-
-  return o
 end
 
 ---------------------------------------------------------------------------
@@ -194,15 +184,9 @@ function Options:Init()
     return
   end
   local ok, err = pcall(function()
-    local options = buildOptions()
-    AceConfig:RegisterOptionsTable(ADDON_NAME, options)
-    -- Einstellungen > AddOns > VoidAlert (nur der Reiter "main") und darunter "Profile".
-    -- AddToBlizOptions(appName, name, parent, ...path), parent ist der Name der Kategorie.
-    local _, categoryID = AceConfigDialog:AddToBlizOptions(ADDON_NAME, "VoidAlert", nil, "main")
+    AceConfig:RegisterOptionsTable(ADDON_NAME, buildOptions())
+    local _, categoryID = AceConfigDialog:AddToBlizOptions(ADDON_NAME, "VoidAlert")
     self.categoryID = categoryID
-    if options.args.profiles then
-      AceConfigDialog:AddToBlizOptions(ADDON_NAME, options.args.profiles.name, "VoidAlert", "profiles")
-    end
   end)
   if not ok then ns.Debug:Error("Options:Init", err) end
   self.ready = ok
@@ -218,7 +202,7 @@ function Options:Open()
   return ok
 end
 
--- Offenes Menü aktualisieren, wenn sich etwas außerhalb davon ändert (Slash-Befehl, Spec, Profil)
+-- Offenes Menü aktualisieren, wenn sich etwas außerhalb davon ändert (Slash-Befehl, Spezialisierung)
 function Options:Notify()
   local registry = LibStub("AceConfigRegistry-3.0", true)
   if registry then pcall(registry.NotifyChange, registry, ADDON_NAME) end
