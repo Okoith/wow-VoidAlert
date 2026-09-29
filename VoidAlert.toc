@@ -6,8 +6,7 @@
 ## Version: @project-version@
 ## SavedVariables: VoidAlertDB, VoidAlertDebugLog
 ## X-License: MIT
-# CurseForge-Projekt-ID folgt später:
-# ## X-Curse-Project-ID:
+## X-Curse-Project-ID: 1717922
 
 embeds.xml
 

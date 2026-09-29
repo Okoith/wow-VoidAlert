@@ -8,6 +8,7 @@ Release candidate.
 - **Profiles** as their own entry under VoidAlert: settings per character, copy from another character, reset.
 - A chosen sound that is no longer available is shown as *(missing)* in the menu and is not overwritten; the default sound is played instead.
 - Changes made with chat commands are shown in the open settings window right away. `/voidalert` without arguments now opens the settings, `/voidalert help` lists the commands.
+- CurseForge project ID added, automatic uploads to CurseForge.
 - Custom sounds: new files need a complete restart of WoW, `/reload` does not detect them. The hints in the menu and chat say so.
 
 ## 1.0.0-alpha.1

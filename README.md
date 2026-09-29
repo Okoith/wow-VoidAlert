@@ -23,7 +23,7 @@ Sound only, nothing is shown on the screen.
 
 ## Installation
 
-Download the zip from the [Releases](../../releases) page and extract it to `World of Warcraft\_retail_\Interface\AddOns\`.
+Install VoidAlert from [CurseForge](https://curseforge.com/project/1717922) (for example with the CurseForge app), or download the zip from the [Releases](../../releases) page and extract it to `World of Warcraft\_retail_\Interface\AddOns\`.
 
 The zip contains all required libraries. A plain copy of the repository does **not** work, because the libraries are only added by the packager.
 
@@ -89,9 +89,12 @@ Libraries are fetched by the [BigWigs packager](https://github.com/BigWigsMods/p
 
 ### Releases
 
-Pushing a tag `v*` (for example `v1.0.0`, test builds `v1.0.0-alpha.N` or `v1.0.0-beta.N`) starts `.github/workflows/release.yml`. It builds a zip with all libraries and the bundled sounds and publishes it as a GitHub release.
+Pushing a tag `v*` (for example `v1.0.0`, test builds `v1.0.0-alpha.N` or `v1.0.0-beta.N`) starts `.github/workflows/release.yml`. It builds a zip with all libraries and the bundled sounds, publishes it as a GitHub release and uploads it to [CurseForge](https://curseforge.com/project/1717922).
 
-**CurseForge:** the workflow already passes the Actions secret `CF_API_TOKEN` to the packager. The packager only uploads to CurseForge when a project ID is also set in `VoidAlert.toc` (`## X-Curse-Project-ID`), which follows later.
+**CurseForge upload:** the packager uploads to CurseForge when both a token and a project ID are present:
+
+- the project ID is set in `VoidAlert.toc` (`## X-Curse-Project-ID: 1717922`),
+- the API token is stored as the Actions secret **`CF_API_TOKEN`** (*Settings > Secrets and variables > Actions*) and passed to the packager by the workflow. A new token can be created at <https://authors.curseforge.com/#/settings/api-tokens>.
 
 ## License
 
