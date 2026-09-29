@@ -1,0 +1,20 @@
+## Interface: 120100
+## Title: VoidAlert
+## Notes: Plays a sound when Void Metamorphosis or Collapsing Star becomes usable (Devourer Demon Hunter).
+## Notes-deDE: Spielt einen Sound, sobald Leerenmetamorphose oder Kollabierender Stern einsetzbar ist (Dämonenjäger Verschlinger).
+## Author: Dominique
+## Version: @project-version@
+## SavedVariables: VoidAlertDB, VoidAlertDebugLog
+## X-License: MIT
+# CurseForge-Projekt-ID folgt später:
+# ## X-Curse-Project-ID:
+
+embeds.xml
+
+Locales\enUS.lua
+Locales\deDE.lua
+
+Debug.lua
+Sounds.lua
+Alerts.lua
+Core.lua
