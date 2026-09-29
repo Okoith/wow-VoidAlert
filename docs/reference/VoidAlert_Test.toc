@@ -1,0 +1,8 @@
+## Interface: 120100
+## Title: VoidAlert Test
+## Notes: Testaddon: Leerenmetamorphose und Kollabierender Stern erkennen (Verschlinger)
+## Author: Dominique
+## Version: 0.1.0
+## SavedVariables: VoidAlert_TestLog
+
+VoidAlert_Test.lua
