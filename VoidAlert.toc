@@ -2,6 +2,7 @@
 ## Title: VoidAlert
 ## Notes: Plays a sound when Void Metamorphosis or Collapsing Star becomes usable (Devourer Demon Hunter).
 ## Notes-deDE: Spielt einen Sound, sobald Leerenmetamorphose oder Kollabierender Stern einsetzbar ist (Dämonenjäger Verschlinger).
+## IconTexture: Interface\AddOns\VoidAlert\media\icon.png
 ## Author: Dominique
 ## Version: @project-version@
 ## SavedVariables: VoidAlertDB, VoidAlertDebugLog
