@@ -2,7 +2,7 @@
 
 ## 1.0.1
 
-- Addon icon in the AddOns list.
+- Addon icon in the AddOns list
 
 ## 1.0.0-beta.2
 
