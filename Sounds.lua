@@ -28,6 +28,8 @@ Sounds.BUNDLED = {
   { id = "meta_de", file = "meta_de.ogg", label = "SOUND_META_DE", lsm = "VoidAlert: Metamorphosis (DE)" },
   { id = "star_en", file = "star_en.ogg", label = "SOUND_STAR_EN", lsm = "VoidAlert: Collapsing Star (EN)" },
   { id = "star_de", file = "star_de.ogg", label = "SOUND_STAR_DE", lsm = "VoidAlert: Collapsing Star (DE)" },
+  { id = "immo_en", file = "immo_en.ogg", label = "SOUND_IMMO_EN", lsm = "VoidAlert: Soul Immolation (EN)" },
+  { id = "immo_de", file = "immo_de.ogg", label = "SOUND_IMMO_DE", lsm = "VoidAlert: Soul Immolation (DE)" },
 }
 local bundledByID, ownLSMNames = {}, {}
 for _, s in ipairs(Sounds.BUNDLED) do
@@ -54,6 +56,7 @@ local lang = (GetLocale() == "deDE") and "de" or "en"
 Sounds.DEFAULTS = {
   meta = "addon:meta_" .. lang,
   star = "addon:star_" .. lang,
+  immo = "addon:immo_" .. lang,
 }
 
 ---------------------------------------------------------------------------

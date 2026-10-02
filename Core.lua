@@ -3,6 +3,8 @@ local L = ns.L
 
 -- Init, AceDB, Events, Slash-Befehle
 
+local issecret = issecretvalue or function() return false end
+
 ns.VERSION = (C_AddOns and C_AddOns.GetAddOnMetadata and C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")) or "?"
 
 ns.defaults = {
@@ -10,6 +12,8 @@ ns.defaults = {
     alerts = {
       meta = { enabled = true, sound = ns.Sounds.DEFAULTS.meta },   -- Standard je nach Client-Sprache
       star = { enabled = true, sound = ns.Sounds.DEFAULTS.star },
+      -- Neu in 1.1.0; bestehende Profile bekommen den Eintrag über die AceDB-Defaults
+      immo = { enabled = true, sound = ns.Sounds.DEFAULTS.immo },
     },
     channel = "Master",
     combatOnly = true,
@@ -33,6 +37,8 @@ ns.inCombat = false
 
 local events = CreateFrame("Frame")
 local handlers = {}
+-- Einheiten-Ereignisse nur für den Spieler registrieren (RegisterUnitEvent)
+local unitEvents = { UNIT_SPELLCAST_SUCCEEDED = "player" }
 
 -- Spezialisierung neu prüfen (SPEC 3). Loggen nur, wenn sich etwas geändert hat,
 -- denn SPELLS_CHANGED kommt oft.
@@ -64,6 +70,7 @@ function handlers.PLAYER_LOGIN()
   ns.loggedIn = true
   ns.Debug:LogMeta()
   ns.Alerts:LogSpec("login")
+  ns.Immo:Update("login")
   -- Andere Klassen und Specs: Addon still (SPEC 3)
   if ns.Alerts.active and ns.db.profile.chatMessages then Print(L["LOADED"]:format(ns.VERSION)) end
 end
@@ -71,20 +78,49 @@ end
 function handlers.PLAYER_SPECIALIZATION_CHANGED(unit)
   if unit ~= nil and unit ~= "player" then return end
   checkSpec("specChanged")
+  if ns.loggedIn then ns.Immo:Update("specChanged") end
 end
 
 function handlers.SPELLS_CHANGED()
   checkSpec("spellsChanged")
+  if ns.loggedIn then ns.Immo:Update("SPELLS_CHANGED") end
+end
+
+-- Talentwechsel (Gemäßigte Seele / Spontane Immolation, SPEC 9)
+function handlers.TRAIT_CONFIG_UPDATED()
+  if not ns.loggedIn then return end
+  ns.Immo:Update("TRAIT_CONFIG_UPDATED")
 end
 
 function handlers.PLAYER_REGEN_DISABLED()
   ns.inCombat = true
   ns.Debug:Add("combatStart", { active = ns.Alerts.active })
+  if ns.loggedIn then ns.Immo:Update("PLAYER_REGEN_DISABLED") end
 end
 
 function handlers.PLAYER_REGEN_ENABLED()
   ns.inCombat = false
   ns.Debug:Add("combatEnd")
+  if ns.loggedIn then ns.Immo:Update("PLAYER_REGEN_ENABLED") end
+end
+
+-- Seelenimmolation: Abklingzeit und Aufladungen (SPEC 9)
+function handlers.SPELL_UPDATE_COOLDOWN()
+  if not ns.loggedIn then return end
+  ns.Immo:Update("SPELL_UPDATE_COOLDOWN")
+end
+
+function handlers.SPELL_UPDATE_CHARGES()
+  if not ns.loggedIn then return end
+  ns.Immo:Update("SPELL_UPDATE_CHARGES")
+end
+
+-- Payload laut warcraft.wiki.gg: unitTarget, castGUID, spellID
+function handlers.UNIT_SPELLCAST_SUCCEEDED(unit, _, spellID)
+  if not ns.loggedIn then return end
+  if issecret(unit) or unit ~= "player" then return end
+  if issecret(spellID) then return end
+  if spellID == ns.Immo.IMMO_ID then ns.Immo:OnCast() end
 end
 
 function handlers.SPELL_ACTIVATION_OVERLAY_GLOW_SHOW(spellID)
@@ -112,7 +148,12 @@ events:SetScript("OnEvent", function(_, event, ...)
 end)
 
 for event in pairs(handlers) do
-  local ok = pcall(events.RegisterEvent, events, event)
+  local ok
+  if unitEvents[event] then
+    ok = pcall(events.RegisterUnitEvent, events, event, unitEvents[event])
+  else
+    ok = pcall(events.RegisterEvent, events, event)
+  end
   if not ok then Print("Event unknown: " .. event) end
 end
 
@@ -120,7 +161,7 @@ end
 -- Slash-Befehle. /voidalert ohne Argument öffnet das Menü.
 ---------------------------------------------------------------------------
 
-local ALERTS = { meta = true, star = true }
+local ALERTS = { meta = true, star = true, immo = true }
 
 local function onOff(value)
   return value and L["ON"] or L["OFF"]

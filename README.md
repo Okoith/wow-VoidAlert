@@ -4,14 +4,15 @@
 
 World of Warcraft addon (Retail 12.1, Midnight) for **Devourer Demon Hunters**. It plays a sound as soon as
 
-- **Void Metamorphosis** becomes usable (after consuming 50 soul fragments), and
-- **Collapsing Star** becomes usable (during Void Metamorphosis, with 30 soul fragments).
+- **Void Metamorphosis** becomes usable (after consuming 50 soul fragments),
+- **Collapsing Star** becomes usable (during Void Metamorphosis, with 30 soul fragments), and
+- **Soul Immolation** is ready again (on every charge with Tempered Soul, and when Spontaneous Immolation resets it).
 
 Sound only, nothing is shown on the screen.
 
 ## Features
 
-- **Two alerts** with their own sound, each can be turned on or off
+- **Three alerts** with their own sound, each can be turned on or off
 - **Bundled voice alerts** in English and German; the default follows your client language (German client: German voice, otherwise English)
 - **Your own sounds:** up to five files in a separate folder that survives addon updates
 - **LibSharedMedia:** every sound registered by other addons can be used, and VoidAlert's own sounds are registered there for other addons
@@ -35,8 +36,8 @@ The zip contains all required libraries. A plain copy of the repository does **n
 Type `/voidalert` or open *Settings > AddOns > VoidAlert*. Changes apply immediately.
 
 - **Status line** at the top: shows the detected specialization, or a note that VoidAlert is inactive on this character (not a Devourer Demon Hunter).
-- **Void Metamorphosis** and **Collapsing Star:** turn the alert on or off, choose its sound, *Test* button.
-- **General:** sound channel (Master, Sound effects, Dialog, Music, Ambience), only in combat, chat messages, *Test both* button.
+- **Void Metamorphosis**, **Collapsing Star** and **Soul Immolation ready:** turn the alert on or off, choose its sound, *Test* button.
+- **General:** sound channel (Master, Sound effects, Dialog, Music, Ambience), only in combat, chat messages, *Test all* button.
 - **Custom sounds:** where to put your own files (see below).
 - **Debug:** debug mode and *Clear log*.
 
@@ -53,10 +54,10 @@ The sound list contains, in this order: the bundled VoidAlert sounds, your own s
 | `/voidalert` | Open the settings |
 | `/voidalert help` | List the commands |
 | `/voidalert status` | Show whether VoidAlert is active and the current settings |
-| `/voidalert test [meta\|star]` | Play both alerts one after the other (or only one) |
+| `/voidalert test [meta\|star\|immo]` | Play all alerts one after the other (or only one) |
 | `/voidalert sounds` | List all available sounds with their numbers |
-| `/voidalert sound meta\|star <number>` | Choose a sound from the list; `default` restores the default |
-| `/voidalert toggle meta\|star` | Turn an alert on or off |
+| `/voidalert sound meta\|star\|immo <number>` | Choose a sound from the list; `default` restores the default |
+| `/voidalert toggle meta\|star\|immo` | Turn an alert on or off |
 | `/voidalert channel master\|sfx\|dialog\|music\|ambience` | Sound channel |
 | `/voidalert combat on\|off` | Only play alerts in combat |
 | `/voidalert debug on\|off\|clear\|status` | Debug log (`VoidAlertDebugLog` in SavedVariables, off by default) |
@@ -84,6 +85,17 @@ VoidAlert listens to the spell activation glow of the game (`SPELL_ACTIVATION_OV
 A sound is played only when the glow appears, not when it disappears. Each alert is blocked for 2 seconds after it played, so it never plays twice in a row.
 
 The detection was worked out in game with a test addon (`docs/reference/VoidAlert_Test.lua`): of all tested ways, only the glow event was readable and reliable in combat.
+
+### Soul Immolation
+
+For Soul Immolation (spell 1241937), VoidAlert follows the cooldown and the charges:
+
+- **Without Tempered Soul** (1 charge, 60 s cooldown): the alert plays when the cooldown ends. With **Spontaneous Immolation**, Soul Immolation glows when it is reset, and the alert plays as well.
+- **With Tempered Soul** (2 charges, 30 s each): the game hides the current number of charges in combat. VoidAlert counts them itself from your casts and the 30-second recharge, checks the count against the real values out of combat and corrects it in combat when the game reports that no charge is left or that one is back. The alert plays for every charge that comes back.
+
+Tempered Soul and Spontaneous Immolation are a choice node, so you have one or the other. The detection was worked out in game with a second test addon (`docs/reference/ImmoTest.lua`).
+
+### Activation
 
 VoidAlert is active when your character knows Void Metamorphosis or is in the Devourer specialization. This is checked again when you change your specialization or talents.
 

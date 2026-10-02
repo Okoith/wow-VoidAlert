@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0
+
+- **New alert "Soul Immolation ready"** (on by default), with bundled English and German voice alerts; the default follows the client language. Own group in the settings with on/off, sound and *Test* button.
+  - Without Tempered Soul: plays when the cooldown ends, and when Spontaneous Immolation resets Soul Immolation.
+  - With Tempered Soul (2 charges): plays for every charge that comes back. VoidAlert counts the charges itself in combat and checks them against the game out of combat.
+- `/voidalert test`, `sound` and `toggle` know the new alert `immo`. The *Test both* button is now *Test all*.
+- Debug log: new entries for Soul Immolation (`immoSync`, `immoCast`, `immoTimer`, `immoState`, `immoCorrect`, `immoGlow`).
+
 ## 1.0.1
 
 - Addon icon in the AddOns list
