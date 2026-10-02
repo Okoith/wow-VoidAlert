@@ -19,7 +19,7 @@ Vom selben Autor, fertig und im Spiel getestet. Übernimm die bewährten Lösung
 
 ## Harte Regeln
 
-1. **Nur** `SPELL_ACTIVATION_OVERLAY_GLOW_SHOW` zur Erkennung. Kein `IsSpellUsable`, keine Auren, keine Ressourcen (im Test unzuverlässig oder gesperrt).
+1. **Nur** `SPELL_ACTIVATION_OVERLAY_GLOW_SHOW` zur Erkennung. Kein `IsSpellUsable`, keine Auren, keine Ressourcen (im Test unzuverlässig oder gesperrt). Ausnahme seit 1.1.0: Seelenimmolation nutzt zusätzlich die in SPEC Abschnitt 9 getesteten Wege (Abklingzeit, Aufladungen, eigene Casts).
 2. Werte, die geheim sein können, vor Vergleichen mit `issecretvalue` prüfen.
 3. Alle Aufrufe von Spiel-APIs und `PlaySoundFile`/`PlaySound` in `pcall`.
 4. Keine geheimen Werte in SavedVariables.

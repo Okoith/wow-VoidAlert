@@ -2,7 +2,10 @@ local ADDON_NAME, ns = ...
 local L = ns.L
 
 -- Erkennung (SPEC 2) und Aktivierung nur für den Verschlinger (SPEC 3).
--- Einzige Quelle ist SPELL_ACTIVATION_OVERLAY_GLOW_SHOW mit der Spell-ID im Payload.
+-- Leerenmetamorphose und Kollabierender Stern: einzige Quelle ist
+-- SPELL_ACTIVATION_OVERLAY_GLOW_SHOW mit der Spell-ID im Payload.
+-- Seelenimmolation hat ein eigenes Modul (Immo.lua, SPEC 9); ihr Leuchten wird dorthin
+-- weitergereicht.
 
 local Alerts = {}
 ns.Alerts = Alerts
@@ -15,14 +18,14 @@ Alerts.COLLAPSING_STAR_ID = 1221150  -- Kollabierender Stern in der Metamorphose
 -- Wird zur Laufzeit mit GetSpecializationInfo verglichen und samt aller Specs der Klasse geloggt.
 Alerts.DEVOURER_SPEC_ID = 1480
 
-Alerts.LOCKOUT = 2   -- Sekunden Sperre pro Alarm gegen Doppelauslösung (SPEC 2)
+Alerts.LOCKOUT = 2   -- Sekunden Sperre pro Alarm gegen Doppelauslösung (SPEC 2), auch für "immo"
 
 -- Spell-ID im Ereignis -> Alarm
 Alerts.BY_SPELL = {
   [Alerts.VOID_META_ID] = "meta",
   [Alerts.COLLAPSING_STAR_ID] = "star",
 }
-Alerts.ORDER = { "meta", "star" }
+Alerts.ORDER = { "meta", "star", "immo" }
 
 Alerts.active = false
 local lastPlayed = {}   -- Alarm -> GetTime() des letzten Abspielens
@@ -155,18 +158,10 @@ function Alerts:Play(alert, why)
   return result
 end
 
--- GLOW_SHOW: nur hier wird ein Sound abgespielt (SPEC 2)
-function Alerts:OnGlowShow(spellID)
-  if issecret(spellID) then
-    ns.Debug:Add("glowShow", { spellID = spellID })   -- wird als "<SECRET>" gespeichert
-    return
-  end
-  local alert = self.BY_SPELL[spellID]
-  if ns.Debug:IsEnabled() then
-    ns.Debug:Add("glowShow", { spellID = spellID, name = self:SpellName(spellID), alert = alert })
-  end
-  if not alert then return end
-
+-- Gemeinsame Bedingungen für alle Auslöser: aktiv (Verschlinger), Alarm an, "Nur im Kampf"
+-- und die Sperre pro Alarm. info: zusätzliche Felder fürs Debug-Log.
+-- Rückgabe true, wenn der Sound abgespielt wurde.
+function Alerts:TryPlay(alert, why, info)
   local skip
   if not self.active then
     skip = "inactive"
@@ -183,10 +178,35 @@ function Alerts:OnGlowShow(spellID)
     end
   end
   if skip then
-    ns.Debug:Add("alarmSkipped", { alert = alert, spellID = spellID, skip = skip })
+    local out = { alert = alert, why = why, skip = skip }
+    if info then
+      for k, v in pairs(info) do out[k] = v end
+    end
+    ns.Debug:Add("alarmSkipped", out)
+    return false
+  end
+  self:Play(alert, why)
+  return true
+end
+
+-- GLOW_SHOW: Sound für Leerenmetamorphose und Kollabierender Stern (SPEC 2),
+-- Seelenimmolation (Reset durch Spontane Immolation) geht an ns.Immo (SPEC 9)
+function Alerts:OnGlowShow(spellID)
+  if issecret(spellID) then
+    ns.Debug:Add("glowShow", { spellID = spellID })   -- wird als "<SECRET>" gespeichert
     return
   end
-  self:Play(alert, "glow")
+  local isImmo = spellID == ns.Immo.IMMO_ID
+  local alert = self.BY_SPELL[spellID]
+  if ns.Debug:IsEnabled() then
+    ns.Debug:Add("glowShow", { spellID = spellID, name = self:SpellName(spellID), alert = isImmo and "immo" or alert })
+  end
+  if isImmo then
+    ns.Immo:OnGlow()
+    return
+  end
+  if not alert then return end
+  self:TryPlay(alert, "glow", { spellID = spellID })
 end
 
 function Alerts:OnGlowHide(spellID)
@@ -195,11 +215,12 @@ function Alerts:OnGlowHide(spellID)
     ns.Debug:Add("glowHide", { spellID = spellID })
     return
   end
-  ns.Debug:Add("glowHide", { spellID = spellID, name = self:SpellName(spellID), alert = self.BY_SPELL[spellID] })
+  local alert = (spellID == ns.Immo.IMMO_ID) and "immo" or self.BY_SPELL[spellID]
+  ns.Debug:Add("glowHide", { spellID = spellID, name = self:SpellName(spellID), alert = alert })
 end
 
--- /voidalert test: spielt einen oder beide Alarme, unabhängig von an/aus, Kampf und Sperre.
--- Beide nacheinander, damit sie sich nicht überlagern.
+-- /voidalert test: spielt einen oder alle Alarme, unabhängig von an/aus, Kampf und Sperre.
+-- Nacheinander, damit sie sich nicht überlagern.
 local TEST_GAP = 2
 
 function Alerts:Test(which)

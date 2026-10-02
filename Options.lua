@@ -58,10 +58,13 @@ local function soundValues(alert)
   return values, sorting
 end
 
-local function soundGroup(alert, order)
+local function soundGroup(alert, order, note)
   return {
     type = "group", order = order, inline = true, name = L["ALERT_" .. alert],
     args = {
+      note = note and {
+        type = "description", order = 0, width = "full", name = note,
+      } or nil,
       enabled = {
         type = "toggle", order = 1, name = L["OPT_ENABLED"],
         arg = { "alerts", alert, "enabled" }, get = get, set = set,
@@ -109,9 +112,10 @@ local function buildOptions()
 
       meta = soundGroup("meta", 10),
       star = soundGroup("star", 20),
+      immo = soundGroup("immo", 30, L["OPT_IMMO_NOTE"]),
 
       general = {
-        type = "group", order = 30, inline = true, name = L["OPT_GENERAL"],
+        type = "group", order = 40, inline = true, name = L["OPT_GENERAL"],
         args = {
           channel = {
             type = "select", order = 1, name = L["OPT_CHANNEL"], desc = L["OPT_CHANNEL_DESC"],
@@ -126,15 +130,15 @@ local function buildOptions()
             type = "toggle", order = 3, name = L["OPT_CHAT"], desc = L["OPT_CHAT_DESC"],
             arg = { "chatMessages" }, get = get, set = set,
           },
-          testBoth = {
-            type = "execute", order = 4, name = L["OPT_TEST_BOTH"],
+          testAll = {
+            type = "execute", order = 4, name = L["OPT_TEST_ALL"],
             func = function() ns.Alerts:Test() end,
           },
         },
       },
 
       custom = {
-        type = "group", order = 40, inline = true, name = L["OPT_CUSTOM"],
+        type = "group", order = 50, inline = true, name = L["OPT_CUSTOM"],
         args = {
           note = {
             type = "description", order = 1, width = "full",
