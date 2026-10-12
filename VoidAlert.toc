@@ -1,4 +1,4 @@
-## Interface: 120100
+## Interface: 120100, 120105
 ## Title: VoidAlert
 ## Notes: Plays a sound when Void Metamorphosis, Collapsing Star or Soul Immolation is ready (Devourer Demon Hunter).
 ## Notes-deDE: Spielt einen Sound, sobald Leerenmetamorphose, Kollabierender Stern oder Seelenimmolation bereit ist (Dämonenjäger Verschlinger).

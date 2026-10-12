@@ -2,7 +2,7 @@
 
 <p align="center"><img src="docs/voidAlert.png" alt="VoidAlert logo" width="256"></p>
 
-World of Warcraft addon (Retail 12.1, Midnight) for **Devourer Demon Hunters**. It plays a sound as soon as
+World of Warcraft addon (Retail 12.1 and 12.1.5, Midnight) for **Devourer Demon Hunters**. It plays a sound as soon as
 
 - **Void Metamorphosis** becomes usable (after consuming 50 soul fragments),
 - **Collapsing Star** becomes usable (during Void Metamorphosis, with 30 soul fragments), and

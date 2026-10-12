@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Compatible with patch 12.1.5 (Interface 120105)
+- The addon version is shown in the settings
+
 ## 1.1.0
 
 - **New alert "Soul Immolation ready"** (on by default), with bundled English and German voice alerts; the default follows the client language. Own group in the settings with on/off, sound and *Test* button.

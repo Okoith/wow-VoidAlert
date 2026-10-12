@@ -90,3 +90,4 @@ L["OPT_DEBUG_DESC"] = "Schreibt ein Log in die SavedVariables (VoidAlertDebugLog
 L["OPT_DEBUG_CLEAR"] = "Log leeren"
 L["DEBUG_COUNT"] = "%d Einträge im Log."
 L["SOUND_MISSING"] = "%s (fehlt)"
+L["OPT_VERSION"] = "Version: %s"
